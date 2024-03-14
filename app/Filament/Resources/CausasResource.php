@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\Filter;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-
+use Filament\Tables\Filters\SelectFilter;
 
 class CausasResource extends Resource
 {
@@ -148,7 +148,7 @@ class CausasResource extends Resource
             ])->defaultSort('vencimiento_vista', 'asc')
 
 
-            ->filters([
+            ->filters([ 
                 // Ocultar archivadas
                 Filter::make('estado_administrativo')
                     ->label('Ocultar archivadas')
@@ -156,6 +156,9 @@ class CausasResource extends Resource
                     ->default()
                     ->default(true)
                     ->query(fn (Builder $query) => $query->where('estado_administrativo', '<>', 'Archivada'))
+
+
+                
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
