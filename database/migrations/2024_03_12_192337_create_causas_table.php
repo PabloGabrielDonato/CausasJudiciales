@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('estado_administrativo');
             $table->string('partes')->nullable();
             $table->string('tipo');
+            $table->string('obs');
             $table->date('vencimiento_condena')->nullable();
             $table->date('vencimiento_vista')->nullable();
             $table->date('fecha_ingreso')->nullable();

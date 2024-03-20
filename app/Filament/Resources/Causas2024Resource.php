@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+
 use Filament\Tables\Actions\Action;
 use App\Filament\Resources\Causas2024Resource\Pages;
 use App\Filament\Resources\Causas2024Resource\RelationManagers;
@@ -73,9 +74,11 @@ class Causas2024Resource extends Resource
                 Forms\Components\DatePicker::make('fecha_ingreso')
                 ->label('Fecha de ingreso'),
 
-                Forms\Components\TextInput::make('secretario')
+            Forms\Components\TextInput::make('secretario')
                 ->label('Secretaria'),
-
+            
+            Forms\Components\TextInput::make('obs')
+                ->label('Observaciones'),
                 
 
         ]);
@@ -83,7 +86,8 @@ class Causas2024Resource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
+        return $table->paginated(false)
+        
         ->columns([
 
             Tables\Columns\TextColumn::make('numero_expediente')
@@ -152,7 +156,11 @@ class Causas2024Resource extends Resource
                 ->searchable()
                 ->sortable(),
             
-        ])->defaultSort('vencimiento_vista', 'asc')
+            Tables\Columns\TextColumn::make('obs')
+                ->label('Observaciones'),
+        
+        
+                ])->defaultSort('vencimiento_vista', 'asc')
         ->filters([
             // Ocultar archivadas
             Filter::make('estado_administrativo')
@@ -176,8 +184,10 @@ class Causas2024Resource extends Resource
                         ->modalSubmitActionLabel('Si, eliminar')
             ])
             ->bulkActions([
+                ExportBulkAction::make()
+                ->label('Exportar a excel'),
                 Tables\Actions\BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Eliminar causa') // Cambiar la etiqueta de la acción de eliminación
                         ->successNotificationTitle('Causa eliminado correctamente')
