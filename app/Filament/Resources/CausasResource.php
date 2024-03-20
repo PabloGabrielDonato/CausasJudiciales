@@ -16,7 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\Filter;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\RichEditor;
 
 class CausasResource extends Resource
 {
@@ -74,14 +75,15 @@ class CausasResource extends Resource
                 Forms\Components\DatePicker::make('fecha_ingreso')
                 ->label('Fecha de ingreso'),
 
-                
+                Forms\Components\TextInput::make('obs')
+                ->label('Observaciones'),
 
         ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
+        return $table->paginated(false)
             ->columns([
 
                 Tables\Columns\TextColumn::make('numero_expediente')
@@ -134,21 +136,22 @@ class CausasResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('partes')
-                    ->label('Partes')
-                    ->searchable()
-                    ->sortable(),
+                    ->label('Partes'),
 
 
-                    Tables\Columns\TextColumn::make('fecha_ingreso')
+                Tables\Columns\TextColumn::make('fecha_ingreso')
                     ->label('Fecha de ingreso')
                     ->dateTime('d-m-Y')
                     ->searchable()
                     ->sortable(),
                 
+                    Tables\Columns\TextColumn::make('obs')
+                    ->label('Observaciones'),
+                
             ])->defaultSort('vencimiento_vista', 'asc')
 
 
-            ->filters([
+            ->filters([ 
                 // Ocultar archivadas
                 Filter::make('estado_administrativo')
                     ->label('Ocultar archivadas')
@@ -156,6 +159,9 @@ class CausasResource extends Resource
                     ->default()
                     ->default(true)
                     ->query(fn (Builder $query) => $query->where('estado_administrativo', '<>', 'Archivada'))
+
+
+                
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -171,8 +177,10 @@ class CausasResource extends Resource
                         ->modalSubmitActionLabel('Si, eliminar')
             ])
             ->bulkActions([
+                ExportBulkAction::make()
+                ->label('Exportar a excel'),
                 Tables\Actions\BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    
 
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Eliminar causa') // Cambiar la etiqueta de la acción de eliminación
